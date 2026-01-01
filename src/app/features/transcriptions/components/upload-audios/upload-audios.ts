@@ -1,8 +1,10 @@
-import { Component, ElementRef, inject, Signal, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, Signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CampaignsStore } from '../../../campaigns/state/campaigns.store';
 import { FormUtils } from '../../../../shared/utils/form.utils';
 import { AudiosStore } from '../../../audios/state/audios.store';
+import { TranscriptionsStore } from '../../state/transcriptions.store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-upload-audios',
@@ -16,6 +18,8 @@ export class UploadAudios {
 
   private readonly _campaigns: CampaignsStore = inject(CampaignsStore);
   private readonly _audios: AudiosStore = inject(AudiosStore);
+  private readonly _transcriptions: TranscriptionsStore = inject(TranscriptionsStore);
+  private readonly _destroyRef: DestroyRef = inject(DestroyRef);
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _form: FormGroup = this._fb.group({
     campaign_id: ['', [Validators.required]],
@@ -29,6 +33,14 @@ export class UploadAudios {
   public readonly formUtils = FormUtils;
   public selectedFiles: File[] = [];
   public isDragging = false;
+
+  constructor(){
+    this._audios.uploadComplete$
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() =>{
+        this.reloadCampaigns();
+      });
+  }
 
   public get form(): FormGroup {
     return this._form;
@@ -132,6 +144,13 @@ export class UploadAudios {
           }
         },
       });
+    }
+  }
+
+  private reloadCampaigns(): void{
+    const meta = this._transcriptions.meta();
+    if(meta){
+      this._transcriptions.load(meta._page, meta._pageSize).subscribe();
     }
   }
 }

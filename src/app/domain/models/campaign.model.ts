@@ -43,7 +43,7 @@ export class CampaignStats{
     private readonly _done: number,
     private readonly _error: number,
     private readonly _total_cost: number,
-    private readonly _total_duration_minutes: number,
+    private readonly _total_duration_seconds: number,
     private readonly _created_at: Date,
     private readonly _updated_at: Date,
   ){}
@@ -84,8 +84,8 @@ export class CampaignStats{
   get total_cost(): number{
     return this._total_cost;
   }
-  get total_duration_minutes(): number{
-    return this._total_duration_minutes;
+  get total_duration_seconds(): number{
+    return this._total_duration_seconds;
   }
   get created_at(): Date{
     return this._created_at;

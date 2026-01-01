@@ -1,0 +1,38 @@
+<dialog #dlg class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold text-base-content mb-4">{{ title }}</h3>
+
+    <div class="py-4">
+      <p class="text-base-content/80">{{ message }}</p>
+
+      @if (details.length > 0) {
+      <div class="mt-4 space-y-2">
+        @for (detail of details; track $index) {
+        <div class="flex items-start gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning shrink-0 mt-0.5" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span class="text-sm text-base-content/70">{{ detail }}</span>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <div class="modal-action">
+      <button type="button" class="btn btn-ghost" (click)="onCancel()">
+        {{ cancelText }}
+      </button>
+      <button type="button" class="btn" [ngClass]="confirmButtonClass" (click)="onConfirm()">
+        {{ confirmText }}
+      </button>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button type="button" aria-label="Cerrar" (click)="onCancel()">close</button>
+  </form>
+</dialog>
