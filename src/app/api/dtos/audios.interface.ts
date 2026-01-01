@@ -1,33 +1,33 @@
-export interface AudioDto {
+export interface AudioUploadDto {
   file:         File;
   campaign_id:  number;
 }
 
-export interface AudiosDto {
+export interface AudiosUploadDto {
   files:         File[];
   campaign_id:  number;
 }
 
-export interface AudioCreateResponseDto {
-  id:               number;
-  user_id:          number;
-  campaign_id:      number;
-  original_name:    string;
-  original_path:    string;
-  original_ext:     string;
-  processed_path:   string;
-  mime_type:        string;
-  size_bytes:       number;
-  status:           string;
-  transcription:    string;
-  duration_seconds: number;
-  cost:             number;
-  error_message:    string;
-  created_at:       Date;
-  updated_at:       Date;
+export interface AudioResponseDto {
+  id:                 number;
+  user_id:            number;
+  campaign_id:        number;
+  original_name:      string;
+  original_path:      string;
+  original_ext:       string;
+  processed_path:     string | null;
+  mime_type:          string | null;
+  size_bytes:         number | null;
+  status:             string;
+  transcription:      string | null;
+  duration_seconds:   number | null;
+  cost:               number | null;
+  error_message:      string | null;
+  created_at:         Date;
+  updated_at:         Date;
 }
 
-export interface AudiosCreateRespondeDto{
+export interface AudiosUploadResponseDto {
   message:  string;
-  audios:   AudioCreateResponseDto[];
+  audios:   AudioResponseDto[];
 }

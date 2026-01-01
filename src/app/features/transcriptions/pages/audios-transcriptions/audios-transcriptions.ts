@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { TableTranscriptions } from "../../components/table-transcriptions/table-transcriptions";
+import { TranscriptionsTable } from "../../components/transcriptions-table/transcriptions-table";
 
 @Component({
   selector: 'app-audios-transcriptions',
-  imports: [TableTranscriptions],
+  imports: [TranscriptionsTable],
   templateUrl: './audios-transcriptions.html',
 })
 export class AudiosTranscriptions { }

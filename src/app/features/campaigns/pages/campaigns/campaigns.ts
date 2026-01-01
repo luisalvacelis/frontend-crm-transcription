@@ -3,8 +3,8 @@ import { HeaderCampaigns } from "../../components/header-campaigns/header-campai
 import { TableCampaigns } from "../../components/table-campaigns/table-campaigns";
 
 @Component({
-  selector: 'app-campaigns-page',
+  selector: 'app-campaigns',
   imports: [HeaderCampaigns, TableCampaigns],
-  templateUrl: './campaigns-page.html',
+  templateUrl: './campaigns.html',
 })
-export class CampaignsPage { }
+export class Campaigns { }

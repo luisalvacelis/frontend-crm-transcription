@@ -1,5 +1,5 @@
 import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { Campaign, CampaignStats } from '../../../domain/models/campaign.model';
+import { CampaignStats } from '../../../domain/models/campaign.model';
 import { Page, PageMeta } from '../../../domain/models/page.model';
 import { CampaignsService } from '../../campaigns/services/campaigns.service';
 import { catchError, finalize, Observable, of, tap } from 'rxjs';
@@ -11,6 +11,7 @@ import { TranscriptionsService } from '../services/transcriptions.service';
 export class TranscriptionsStore {
 
   private readonly _page: WritableSignal<Page<CampaignStats> | null> = signal<Page<CampaignStats> | null>(null);
+  private readonly _uploading: WritableSignal<boolean> = signal<boolean>(false);
   private readonly _loading: WritableSignal<boolean> = signal<boolean>(false);
   private readonly _error: WritableSignal<string | null> = signal<string | null>(null);
 
@@ -18,6 +19,7 @@ export class TranscriptionsStore {
   public readonly campaignsStats: Signal<CampaignStats[]> = computed(() => this._page()?.items ?? []);
   public readonly meta: Signal<PageMeta | null> = computed(() => this._page()?.meta ?? null);
 
+  public readonly uploading: Signal<boolean> = this._uploading.asReadonly();
   public readonly loading: Signal<boolean> = this._loading.asReadonly();
   public readonly error: Signal<string | null> = this._error.asReadonly();
 
@@ -46,42 +48,6 @@ export class TranscriptionsStore {
       catchError((err) => {
         this._error.set(err?.error?.detail ?? err?.error?.message ?? 'Error cargando permisos');
         return of([]);
-      }),
-      finalize(() => this._loading.set(false))
-    );
-  }
-
-
-  public uploadSingle(file: File, campaign_id: number): Observable<any> {
-    this._loading.set(true);
-    this._error.set(null);
-
-    return this._api.uploadAudio({file, campaign_id}).pipe(
-      tap(() => {
-        // const sub = this._store
-        //   .load(p, ps, search)
-        //   .pipe(takeUntilDestroyed(this._destroyRef))
-        //   .subscribe();
-      }),
-      catchError((err) => {
-        this._error.set(err?.error?.detail ?? 'Error al subir el audio');
-        return of(null);
-      }),
-      finalize(() => this._loading.set(false))
-    );
-  }
-
-  public uploadMultiple(files: File[], campaign_id: number): Observable<any> {
-    this._loading.set(true);
-    this._error.set(null);
-
-    return this._api.uploadMultipleAudios({files, campaign_id}).pipe(
-      tap(() => {
-        // this.loadAll(); // Recargar lista
-      }),
-      catchError((err) => {
-        this._error.set(err?.error?.detail ?? 'Error al subir los audios');
-        return of(null);
       }),
       finalize(() => this._loading.set(false))
     );

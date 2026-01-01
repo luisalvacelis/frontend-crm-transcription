@@ -50,6 +50,22 @@ export class CampaignsStore {
     );
   }
 
+  public loadAll(): void {
+    this._loading.set(true);
+    this._error.set(null);
+
+    this._api.load(1, 100).pipe(
+      tap(result => {
+        this._page.set(result);
+      }),
+      catchError((err) => {
+        this._error.set(err?.error?.detail ?? 'Error cargando campañas');
+        return of(null);
+      }),
+      finalize(() => this._loading.set(false))
+    ).subscribe();
+  }
+
   public create(dto: CampaignCreateDto): Observable<Object | never[]> {
     this._loading.set(true);
     this._error.set(null);

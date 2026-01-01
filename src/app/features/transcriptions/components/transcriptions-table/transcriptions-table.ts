@@ -1,20 +1,20 @@
 import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, effect, inject, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
-import { TranscriptionsStore } from '../../state/transcriptions-store';
+import { TranscriptionsStore } from '../../state/transcriptions.store';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { CampaignStats } from '../../../../domain/models/campaign.model';
 import { PageMeta } from '../../../../domain/models/page.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NewAudiosTranscriptions } from "../new-audios-transcriptions/new-audios-transcriptions";
+import { UploadAudios } from "../upload-audios/upload-audios";
 
 @Component({
-  selector: 'app-table-transcriptions',
-  imports: [DatePipe, NewAudiosTranscriptions],
-  templateUrl: './table-transcriptions.html',
+  selector: 'app-transcriptions-table',
+  imports: [DatePipe, UploadAudios],
+  templateUrl: './transcriptions-table.html',
 })
-export class TableTranscriptions {
+export class TranscriptionsTable {
 
-  @ViewChild(NewAudiosTranscriptions) newAudiosTranscriptionModal!: NewAudiosTranscriptions;
+  @ViewChild(UploadAudios) newAudiosTranscriptionModal!: UploadAudios;
   // @ViewChild(EditCampaign) editCampaignModal!: EditCampaign;
   // @ViewChild(DeleteCampaign) deleteCampaignModal!: DeleteCampaign;
 

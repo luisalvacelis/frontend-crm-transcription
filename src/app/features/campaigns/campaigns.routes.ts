@@ -1,10 +1,10 @@
 import { Routes } from "@angular/router";
-import { CampaignsPage } from "./pages/campaigns-page/campaigns-page";
+import { Campaigns } from "./pages/campaigns/campaigns";
 
 export const routes: Routes = [
   {
     path: '',
-    component: CampaignsPage,
+    component: Campaigns,
     title: 'Campañas | CRM Transcription',
   }
 ]
