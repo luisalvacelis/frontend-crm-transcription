@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, ElementRef, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { CampaignsStore } from '../../state/campaigns.store';
 import { Campaign } from '../../../../domain/models/campaign.model';
 
@@ -9,7 +9,7 @@ import { Campaign } from '../../../../domain/models/campaign.model';
 })
 export class DeleteCampaign {
 
-  @ViewChild('dlg') dlg!: ElementRef<HTMLDialogElement>;
+  public readonly dlg: Signal<ElementRef<HTMLDialogElement>> = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');
 
   private readonly _campaigns: CampaignsStore = inject(CampaignsStore);
   private readonly _currentCampaign: WritableSignal<Campaign | null> = signal<Campaign | null>(null);
@@ -30,12 +30,12 @@ export class DeleteCampaign {
 
   public open(campaign: Campaign): void{
     this._currentCampaign.set(campaign);
-    this.dlg.nativeElement.showModal();
+    this.dlg().nativeElement.showModal();
   }
 
   public close(): void{
     this._currentCampaign.set(null);
-    this.dlg.nativeElement.close();
+    this.dlg().nativeElement.close();
   }
 
   public delete(): void{

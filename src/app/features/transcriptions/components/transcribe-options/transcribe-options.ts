@@ -27,16 +27,16 @@ import { catchError, finalize, switchMap, tap } from 'rxjs/operators';
   templateUrl: './transcribe-options.html',
 })
 export class TranscribeOptions implements OnDestroy {
+
   public readonly campaign: InputSignal<CampaignStats | null> = input<CampaignStats | null>(null);
   public readonly isModalOpen: InputSignal<boolean> = input<boolean>(false);
   public readonly confirmModal: Signal<ConfirmModal> = viewChild.required(ConfirmModal);
 
-  private readonly _audiosStore = inject(AudiosStore);
-  private readonly _campaignStore = inject(CampaignsStore);
-  private readonly _transcriptionsStore = inject(TranscriptionsStore);
+  private readonly _audiosStore: AudiosStore = inject(AudiosStore);
+  private readonly _campaignStore: CampaignsStore = inject(CampaignsStore);
+  private readonly _transcriptionsStore: TranscriptionsStore = inject(TranscriptionsStore);
 
-  private readonly _selectedProvider: WritableSignal<'deepgram' | 'whisperx'> =
-    signal<'deepgram' | 'whisperx'>('deepgram');
+  private readonly _selectedProvider: WritableSignal<'deepgram' | 'whisperx'> = signal<'deepgram' | 'whisperx'>('deepgram');
 
   private _pollingSubscription: Subscription | null = null;
   private readonly _justStartedTranscription: WritableSignal<boolean> = signal(false);

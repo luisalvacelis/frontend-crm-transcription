@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, DestroyRef, effect, inject, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { CampaignsStore } from '../../state/campaigns.store';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { Campaign } from '../../../../domain/models/campaign.model';
@@ -16,9 +16,9 @@ import { DeleteCampaign } from '../delete-campaign/delete-campaign';
 })
 export class TableCampaigns {
 
-  @ViewChild(NewCampaign) newCampaignModal!: NewCampaign;
-  @ViewChild(EditCampaign) editCampaignModal!: EditCampaign;
-  @ViewChild(DeleteCampaign) deleteCampaignModal!: DeleteCampaign;
+  public readonly newCampaignModal: Signal<NewCampaign> = viewChild.required(NewCampaign);
+  public readonly editCampaignModal: Signal<EditCampaign> = viewChild.required(EditCampaign);
+  public readonly deleteCampaignModal: Signal<DeleteCampaign> = viewChild.required(DeleteCampaign);
 
   private readonly _store: CampaignsStore = inject(CampaignsStore);
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
@@ -84,14 +84,14 @@ export class TableCampaigns {
   }
 
   public newCampaign(): void{
-    this.newCampaignModal.open();
+    this.newCampaignModal().open();
   }
 
   public editCampaign(campaign: Campaign): void {
-    this.editCampaignModal.open(campaign);
+    this.editCampaignModal().open(campaign);
   }
 
   public deleteCampaign(campaign: Campaign): void{
-    this.deleteCampaignModal.open(campaign);
+    this.deleteCampaignModal().open(campaign);
   }
 }

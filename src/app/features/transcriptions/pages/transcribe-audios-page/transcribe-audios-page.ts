@@ -1,8 +1,7 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, signal, computed, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AudiosStore } from '../../../audios/state/audios.store';
 import { TranscriptionsStore } from '../../state/transcriptions.store';
-import { CampaignStats } from '../../../../domain/models/campaign.model';
 import { TranscribeOptions } from "../../components/transcribe-options/transcribe-options";
 import { TranscribedAudios } from "../../components/transcribed-audios/transcribed-audios";
 
@@ -13,13 +12,13 @@ import { TranscribedAudios } from "../../components/transcribed-audios/transcrib
 })
 export class TranscribeAudiosPage implements OnInit {
 
-  private readonly _route = inject(ActivatedRoute);
-  private readonly _router = inject(Router);
-  private readonly _audiosStore = inject(AudiosStore);
-  private readonly _transcriptionsStore = inject(TranscriptionsStore);
+  private readonly _route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly _router: Router = inject(Router);
+  private readonly _audiosStore: AudiosStore = inject(AudiosStore);
+  private readonly _transcriptionsStore: TranscriptionsStore = inject(TranscriptionsStore);
 
-  private readonly _campaignId = signal<number | null>(null);
-  private readonly _isPageActive = signal<boolean>(true);
+  private readonly _campaignId: WritableSignal<number | null> = signal<number | null>(null);
+  private readonly _isPageActive: WritableSignal<boolean> = signal<boolean>(true);
 
   public readonly campaign = computed(() => {
     const id = this._campaignId();

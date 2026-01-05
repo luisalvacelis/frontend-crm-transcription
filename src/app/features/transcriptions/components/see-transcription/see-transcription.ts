@@ -10,7 +10,7 @@ import { TranscriptionRow } from '../../../../api/dtos/transcription-row.interfa
 })
 export class SeeTranscription {
 
-  public readonly dlg = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');
+  public readonly dlg: Signal<ElementRef<HTMLDialogElement>> = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');
 
   private readonly _audio: WritableSignal<Audio | null> = signal<Audio | null>(null);
 

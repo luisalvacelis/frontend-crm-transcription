@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, inject, Signal, ViewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, inject, Signal, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CampaignsStore } from '../../../campaigns/state/campaigns.store';
 import { FormUtils } from '../../../../shared/utils/form.utils';
@@ -13,8 +13,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class UploadAudios {
 
-  @ViewChild('dlg') dlg!: ElementRef<HTMLDialogElement>;
-  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  public readonly dlg: Signal<ElementRef<HTMLDialogElement>> = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');
+  public readonly fileInput: Signal<ElementRef<HTMLDialogElement>> = viewChild.required<ElementRef<HTMLDialogElement>>('fileInput');
+  // @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   private readonly _campaigns: CampaignsStore = inject(CampaignsStore);
   private readonly _audios: AudiosStore = inject(AudiosStore);
@@ -56,16 +57,16 @@ export class UploadAudios {
 
   public open(): void {
     this._campaigns.loadAll();
-    this.dlg.nativeElement.showModal();
+    this.dlg().nativeElement.showModal();
   }
 
   public close(): void {
-    this.dlg.nativeElement.close();
+    this.dlg().nativeElement.close();
     this._audios.clearError();
     this._form.reset();
     this.selectedFiles = [];
     if (this.fileInput) {
-      this.fileInput.nativeElement.value = '';
+      this.fileInput().nativeElement.innerText = '';
     }
   }
 

@@ -10,8 +10,8 @@ import { AuthApiService } from '../../features/auth/services/auth-api.service';
   templateUrl: './navbar.html',
 })
 export class Navbar {
-  private readonly _auth = inject(AuthApiService);
-  private readonly _authFacade = inject(AuthFacadeService);
+  private readonly _auth: AuthApiService = inject(AuthApiService);
+  private readonly _authFacade: AuthFacadeService = inject(AuthFacadeService);
 
   public isLoggedIn(): boolean { return this._auth.isLoggedIn(); }
   public getLoading(): boolean { return this._authFacade.loading(); }
