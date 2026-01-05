@@ -1,22 +1,115 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
-  <div
-    class="bg-card rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1"
-    routerLink="/transcriptions/dashboard">
-    <div class="w-12 h-12 rounded-xl bg-linear-to-br from-red-500 to-orange-500 flex items-center justify-center mb-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M8 5v14l11-7z" />
-      </svg>
+<div class="space-y-4">
+
+  <!-- Provider -->
+  <div class="rounded-xl border border-base-300 bg-base-100 p-4">
+    <div class="flex items-center justify-between gap-3 mb-3">
+      <div>
+        <h4 class="text-sm font-semibold">Proveedor de transcripción</h4>
+        <p class="text-xs text-base-content/60">Selecciona el motor antes de iniciar.</p>
+      </div>
+      <span class="badge badge-outline">Provider</span>
     </div>
-    <h3 class="font-semibold text-foreground">Empezar</h3>
-  </div>
-  <div
-    class="bg-card rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1"
-    routerLink="/transcriptions/audios">
-    <div class="w-12 h-12 rounded-xl bg-linear-to-br from-primary to-accent flex items-center justify-center mb-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="6" y="6" width="12" height="12" rx="2" />
-      </svg>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <button type="button" class="btn btn-sm h-11 justify-start gap-3 rounded-lg"
+        [class.btn-primary]="isProviderSelected('deepgram')" [class.btn-ghost]="!isProviderSelected('deepgram')"
+        [disabled]="!canStart()" (click)="selectProvider('deepgram')">
+        <span class="grid place-items-center w-9 h-9 rounded-md bg-base-200/70"
+          [class.bg-primary/20]="isProviderSelected('deepgram')">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+        </span>
+
+        <div class="text-left leading-tight">
+          <div class="font-semibold">Deepgram</div>
+          <div class="text-xs opacity-70">Cloud · rápido</div>
+        </div>
+      </button>
+
+      <button type="button" class="btn btn-sm h-11 justify-start gap-3 rounded-lg"
+        [class.btn-primary]="isProviderSelected('whisperx')" [class.btn-ghost]="!isProviderSelected('whisperx')"
+        [disabled]="!canStart()" (click)="selectProvider('whisperx')">
+        <span class="grid place-items-center w-9 h-9 rounded-md bg-base-200/70"
+          [class.bg-primary/20]="isProviderSelected('whisperx')">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </span>
+
+        <div class="text-left leading-tight">
+          <div class="font-semibold">WhisperX</div>
+          <div class="text-xs opacity-70">Local · privacidad</div>
+        </div>
+      </button>
     </div>
-    <h3 class="font-semibold text-foreground">Detener</h3>
   </div>
+
+  <div class="rounded-xl border border-base-300 bg-base-100 p-4">
+    <div class="flex items-center justify-between gap-3 mb-3">
+      <div>
+        <h4 class="text-sm font-semibold">Acciones</h4>
+        <p class="text-xs text-base-content/60">Inicia o detén el proceso de transcripción.</p>
+      </div>
+      <span class="badge badge-outline" [class.badge-success]="isCompleted()"
+        [class.badge-warning]="(isTranscribing() || isPolling()) && !isCompleted()">
+        {{
+        isCompleted()
+        ? 'Finalizado'
+        : (isTranscribing() || isPolling())
+        ? 'En proceso'
+        : 'Listo'
+        }}
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <button type="button" class="btn btn-primary btn-sm h-11 rounded-lg gap-2"
+        [disabled]="!canStart() || isTranscribing() || isPolling()" (click)="canStart() && onStartTranscription()">
+        @if (isTranscribing() || isPolling()) {
+        <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg>
+        <span>Transcribiendo...</span>
+        } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="8 5 19 12 8 19 8 5"></polygon>
+        </svg>
+        <span>{{ isCompleted() ? 'Finalizado' : 'Empezar' }}</span>
+        }
+      </button>
+
+      <button type="button" class="btn btn-error btn-sm h-11 rounded-lg gap-2"
+        [disabled]="!(isTranscribing() || isPolling())"
+        (click)="(isTranscribing() || isPolling()) && onStopTranscription()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="7" y="7" width="10" height="10" rx="1"></rect>
+        </svg>
+        Detener
+      </button>
+    </div>
+
+    <div class="mt-3 text-xs text-base-content/60 flex items-center justify-between">
+      <span>Tip: puedes detener solo mientras esté “En proceso”.</span>
+      <span class="font-medium">
+        {{
+        isProviderSelected('deepgram') ? 'Deepgram' :
+        isProviderSelected('whisperx') ? 'WhisperX' : 'Sin proveedor'
+        }}
+      </span>
+    </div>
+  </div>
+
 </div>
+
+<app-confirm-modal (confirmed)="handleTranscribeConfirmed()" />

@@ -99,8 +99,14 @@ export class AudiosStore {
 
   public refresh(): void {
     const currentMeta = this.meta();
+    const currentCampaignId = this._currentCampaignId();
+
     if (currentMeta) {
-      this.load(currentMeta._page, currentMeta._pageSize).subscribe();
+      this.load(
+        currentMeta._page,
+        currentMeta._pageSize,
+        currentCampaignId ?? undefined
+      ).subscribe();
     }
   }
 

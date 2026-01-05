@@ -1,7 +1,7 @@
 import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { Page, PageMeta } from '../../../domain/models/page.model';
 import { catchError, finalize, Observable, of, tap, throwError } from 'rxjs';
-import { Campaign } from '../../../domain/models/campaign.model';
+import { Campaign, CampaignTranscribeAll } from '../../../domain/models/campaign.model';
 import { CampaignsService } from '../services/campaigns.service';
 import { CampaignCreateDto } from '../../../api/dtos/campaigns.interface';
 
@@ -16,6 +16,7 @@ export class CampaignsStore {
 
   public readonly page: Signal<Page<Campaign> | null> = this._page.asReadonly();
   public readonly campaigns: Signal<Campaign[]> = computed(() => this._page()?.items ?? []);
+  public readonly campaignResponse: WritableSignal<Campaign | null> = signal<Campaign | null>(null);
   public readonly meta: Signal<PageMeta | null> = computed(() => this._page()?.meta ?? null);
 
   public readonly loading: Signal<boolean> = this._loading.asReadonly();
@@ -32,6 +33,21 @@ export class CampaignsStore {
 
   public clearError(): void{
     this._error.set(null);
+  }
+
+  public searchByID(campaign_id: number): Observable<Campaign | null>{
+    this._loading.set(true);
+    this._error.set(null);
+    return this._api.searchByID(campaign_id).pipe(
+      tap(result => {
+        this.campaignResponse.set(result);
+      }),
+      catchError((err) => {
+        this._error.set(err?.error?.detail ?? err?.error?.message ?? 'Error cargando permisos');
+        return of(null);
+      }),
+      finalize(() => this._loading.set(false))
+    );
   }
 
   public load(page: number, pageSize: number, search?: string): Observable<Page<Campaign> | never[]>{
@@ -118,6 +134,20 @@ export class CampaignsStore {
       }),
       catchError((err) => {
         const message = err?.error?.detail ?? err?.error?.message ?? 'Error: No se pudo eliminar la campaña.';
+        this._error.set(message);
+        return throwError(() => err);
+      }),
+      finalize(() => this._loading.set(false))
+    );
+  }
+
+  public transcribeAll(campaignId: number, provider: 'deepgram' | 'whisperx'): Observable<CampaignTranscribeAll> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    return this._api.transcribeAll(campaignId, provider).pipe(
+      catchError((err) => {
+        const message = err?.error?.detail ?? err?.error?.message ?? 'Error: No se pudo transcribir la campaña.';
         this._error.set(message);
         return throwError(() => err);
       }),

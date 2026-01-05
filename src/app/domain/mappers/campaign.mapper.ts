@@ -1,5 +1,5 @@
-import { CampaignDto, CampaignsStatsDto } from "../../api/dtos/campaigns.interface";
-import { Campaign, CampaignStats } from "../models/campaign.model";
+import { CampaignDto, CampaignsStatsDto, CampaignTranscribeAllResponseDto } from "../../api/dtos/campaigns.interface";
+import { Campaign, CampaignStats, CampaignTranscribeAll } from "../models/campaign.model";
 
 export class CampaignMapper{
 
@@ -31,5 +31,15 @@ export class CampaignMapper{
       dto.created_at,
       dto.updated_at
     );
+  }
+
+  static fromTranscribeAllDto(dto: CampaignTranscribeAllResponseDto): CampaignTranscribeAll{
+    return new CampaignTranscribeAll(
+      dto.message,
+      dto.campaign_id,
+      dto.campaign_name,
+      dto.total_audios,
+      dto.provider
+    )
   }
 }

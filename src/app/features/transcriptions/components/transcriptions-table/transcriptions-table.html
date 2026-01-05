@@ -1,5 +1,4 @@
 <div class="rounded-2xl bg-base-100 shadow-sm border border-base-200">
-
   <div class="p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between border-b border-base-200">
     <div>
       <h2 class="text-base font-semibold text-base-content">Lista de transcripciones</h2>
@@ -111,12 +110,12 @@
 
           <td>
             <div class="flex gap-1">
-              <button class="btn btn-ghost btn-xs" title="Ver detalles">
+              <button class="btn btn-ghost btn-xs" title="Ver detalles" [disabled]="!campaignStat"
+                (click)=" campaignStat && campaignDetails(campaignStat)">
                 👁️
               </button>
-
-              <button class="btn btn-ghost btn-xs text-error" title="Transcribir"
-                (click)="transcribeAudios(campaignStat)">
+              <button class="btn btn-ghost btn-xs text-error" title="Transcribir" [disabled]="!campaignStat"
+                (click)="campaignStat && transcribeAudios(campaignStat)">
                 ▶️
               </button>
 
@@ -162,4 +161,4 @@
 </div>
 
 <app-upload-audios></app-upload-audios>
-<app-transcribe-audios></app-transcribe-audios>
+<app-campaign-details></app-campaign-details>

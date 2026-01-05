@@ -93,4 +93,33 @@ export class CampaignStats{
   get updated_at(): Date{
     return this._updated_at;
   }
+
+
+}
+
+export class CampaignTranscribeAll{
+
+  constructor(
+    private readonly _message: string,
+    private readonly _campaign_id: number,
+    private readonly _campaign_name: string,
+    private readonly _total_audios: number,
+    private readonly _provider: string
+  ){}
+
+  public get message(): string{
+    return this._message;
+  }
+  public get campaign_id(): number{
+    return this._campaign_id;
+  }
+  public get campaign_name(): string{
+    return this._campaign_name;
+  }
+  public get total_audios(): number{
+    return this._total_audios;
+  }
+  public get provider(): string{
+    return this._provider;
+  }
 }

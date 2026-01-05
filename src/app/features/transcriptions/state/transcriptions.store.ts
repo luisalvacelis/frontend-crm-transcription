@@ -3,7 +3,6 @@ import { CampaignStats } from '../../../domain/models/campaign.model';
 import { Page, PageMeta } from '../../../domain/models/page.model';
 import { CampaignsService } from '../../campaigns/services/campaigns.service';
 import { catchError, finalize, Observable, of, tap } from 'rxjs';
-import { TranscriptionsService } from '../services/transcriptions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +24,6 @@ export class TranscriptionsStore {
 
   constructor(
     private readonly _campaignService: CampaignsService,
-    private readonly _api: TranscriptionsService
   ) { }
 
   public clear(): void{
@@ -46,10 +44,17 @@ export class TranscriptionsStore {
         this._page.set(result);
       }),
       catchError((err) => {
-        this._error.set(err?.error?.detail ?? err?.error?.message ?? 'Error cargando permisos');
+        this._error.set(err?.error?.detail ?? err?.error?.message ?? 'Error cargando campañas');
         return of([]);
       }),
       finalize(() => this._loading.set(false))
     );
+  }
+
+  public refresh(): void {
+    const currentMeta = this.meta();
+    if (currentMeta) {
+      this.load(currentMeta._page, currentMeta._pageSize).subscribe();
+    }
   }
 }

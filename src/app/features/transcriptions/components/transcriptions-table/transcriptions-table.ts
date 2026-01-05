@@ -1,26 +1,26 @@
 import { DatePipe } from '@angular/common';
-import { Component, DestroyRef, effect, inject, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { TranscriptionsStore } from '../../state/transcriptions.store';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { Campaign, CampaignStats } from '../../../../domain/models/campaign.model';
+import { CampaignStats } from '../../../../domain/models/campaign.model';
 import { PageMeta } from '../../../../domain/models/page.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UploadAudios } from "../upload-audios/upload-audios";
-import { TranscribeAudios } from '../transcribe-audios/transcribe-audios';
+import { CampaignDetails } from '../campaign-details/campaign-details';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-transcriptions-table',
-  imports: [DatePipe, UploadAudios, TranscribeAudios],
+  imports: [DatePipe, UploadAudios, CampaignDetails],
   templateUrl: './transcriptions-table.html',
 })
 export class TranscriptionsTable {
 
-  @ViewChild(UploadAudios) newAudiosTranscriptionModal!: UploadAudios;
-  @ViewChild(TranscribeAudios) newTranscribeAudiosModal!: TranscribeAudios;
-  // @ViewChild(EditCampaign) editCampaignModal!: EditCampaign;
-  // @ViewChild(DeleteCampaign) deleteCampaignModal!: DeleteCampaign;
+  public readonly newAudiosTranscriptionModal: Signal<UploadAudios> = viewChild.required(UploadAudios);
+  public readonly campaignDetailsModal: Signal<CampaignDetails> = viewChild.required(CampaignDetails);
 
   private readonly _store: TranscriptionsStore = inject(TranscriptionsStore);
+  private readonly _router: Router = inject(Router);
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
   private readonly _searchSubject: Subject<string> = new Subject<string>();
 
@@ -84,18 +84,17 @@ export class TranscriptionsTable {
   }
 
   public newAudios(): void{
-    this.newAudiosTranscriptionModal.open();
+    this.newAudiosTranscriptionModal().open();
   }
 
-  public transcribeAudios(campaignStats: CampaignStats): void{
-    this.newTranscribeAudiosModal.open(campaignStats)
+  public transcribeAudios(campaignStats: CampaignStats): void {
+    if (!campaignStats) return;
+    const encoded = btoa(campaignStats.id.toString());
+    this._router.navigate(['/transcriptions/audios/transcribe', encoded]);
   }
 
-  // public editCampaign(campaign: Campaign): void {
-  //   this.editCampaignModal.open(campaign);
-  // }
-
-  // public deleteCampaign(campaign: Campaign): void{
-  //   this.deleteCampaignModal.open(campaign);
-  // }
+  public campaignDetails(campaignStats: CampaignStats): void{
+    if(!campaignStats) return;
+    this.campaignDetailsModal().open(campaignStats);
+  }
 }

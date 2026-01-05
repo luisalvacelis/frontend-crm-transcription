@@ -12,9 +12,9 @@ export interface CampaignCreateDto{
 }
 
 export interface CampaignsStatsDto {
-  id:            number;
-  name:          string;
-  description:   string;
+  id:                     number;
+name:                     string;
+  description:            string;
   total_audios:           number;
   total_transcribed:      number;
   status:                 string;
@@ -28,3 +28,16 @@ export interface CampaignsStatsDto {
   created_at:             Date;
   updated_at:             Date;
 }
+
+export interface CampaignTranscribeAllRequestDto {
+  provider: 'deepgram' | 'whisperx';
+}
+
+export interface CampaignTranscribeAllResponseDto{
+  message:        string;
+  campaign_id:    number;
+  campaign_name:  string;
+  total_audios:   number;
+  provider:       string;
+}
+

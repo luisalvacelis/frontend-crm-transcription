@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { ApiConfigService } from '../../../core/config/api-config.service';
 import { map, Observable } from 'rxjs';
 import { Page } from '../../../domain/models/page.model';
-import { Campaign } from '../../../domain/models/campaign.model';
+import { Campaign, CampaignStats } from '../../../domain/models/campaign.model';
 import { PageDto } from '../../../api/dtos/page.interface';
-import { CampaignCreateDto, CampaignDto, CampaignsStatsDto } from '../../../api/dtos/campaigns.interface';
+import { CampaignCreateDto, CampaignDto, CampaignsStatsDto, CampaignTranscribeAllRequestDto, CampaignTranscribeAllResponseDto } from '../../../api/dtos/campaigns.interface';
 import { CampaignMapper } from '../../../domain/mappers/campaign.mapper';
 import { PageMapper } from '../../../domain/mappers/page.mapper';
 
@@ -19,6 +19,13 @@ export class CampaignsService {
     private readonly _api: ApiConfigService
   ) { }
 
+  public searchByID(campaign_id: number): Observable<Campaign>{
+    const url = this._api.main(`campaigns/${campaign_id}`);
+    return this._http.get<Campaign>(url).pipe(
+      map(dto => CampaignMapper.fromDto(dto))
+    );
+  }
+
   public load(page: number, pageSize: number, search?: string): Observable<Page<Campaign>>{
     let url = this._api.main(`campaigns?page=${page}&page_size=${pageSize}`);
     if(search && search.trim()){
@@ -29,7 +36,7 @@ export class CampaignsService {
     );
   }
 
-  public loadStatsAll(page: number, pageSize: number, search?: string){
+  public loadStatsAll(page: number, pageSize: number, search?: string): Observable<Page<CampaignStats>>{
     let url = this._api.main(`campaigns/with-stats?page=${page}&page_size=${pageSize}`);
     if(search && search.trim()){
       url += `&search=${encodeURIComponent(search.trim())}`;
@@ -52,5 +59,14 @@ export class CampaignsService {
   public delete(id: number){
     const url = this._api.main(`campaigns/${id}`);
     return this._http.delete<void>(url);
+  }
+
+  public transcribeAll(campaignId: number, provider: 'deepgram' | 'whisperx'){
+    const url = this._api.main(`campaigns/${campaignId}/transcribe-all`);
+    const body: CampaignTranscribeAllRequestDto = { provider };
+
+    return this._http.post<CampaignTranscribeAllResponseDto>(url, body).pipe(
+      map(dto => CampaignMapper.fromTranscribeAllDto(dto))
+    );
   }
 }

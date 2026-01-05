@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, ElementRef, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { CampaignsStore } from '../../state/campaigns.store';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '../../../../shared/utils/form.utils';
@@ -11,7 +11,7 @@ import { Campaign } from '../../../../domain/models/campaign.model';
 })
 export class EditCampaign {
 
-  @ViewChild('dlg') dlg!: ElementRef<HTMLDialogElement>;
+  public readonly dlg: Signal<ElementRef<HTMLDialogElement>> = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');
 
   private readonly _campaigns: CampaignsStore = inject(CampaignsStore);
   private readonly _fb: FormBuilder = inject(FormBuilder);
@@ -49,14 +49,14 @@ export class EditCampaign {
       name: campaign.name,
       description: campaign.description
     });
-    this.dlg.nativeElement.showModal();
+    this.dlg().nativeElement.showModal();
   }
 
   public close(): void {
     this._form.reset();
     this._currentCampaign.set(null);
     this._campaigns.clearError();
-    this.dlg.nativeElement.close();
+    this.dlg().nativeElement.close();
   }
 
   public onSubmit(): void {
