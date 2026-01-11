@@ -57,4 +57,5 @@ export class TranscriptionsStore {
       this.load(currentMeta._page, currentMeta._pageSize).subscribe();
     }
   }
+
 }

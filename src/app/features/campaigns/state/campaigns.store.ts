@@ -1,9 +1,10 @@
-import { computed, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { Page, PageMeta } from '../../../domain/models/page.model';
 import { catchError, finalize, Observable, of, tap, throwError } from 'rxjs';
 import { Campaign, CampaignTranscribeAll } from '../../../domain/models/campaign.model';
 import { CampaignsService } from '../services/campaigns.service';
 import { CampaignCreateDto } from '../../../api/dtos/campaigns.interface';
+import { TranscriptionsService } from '../../transcriptions/services/transcriptions.service';
 
 @Injectable({
   providedIn: 'root'
@@ -154,4 +155,6 @@ export class CampaignsStore {
       finalize(() => this._loading.set(false))
     );
   }
+
+
 }

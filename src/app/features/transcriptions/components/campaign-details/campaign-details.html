@@ -34,7 +34,7 @@
               Subir audio
             </button>
 
-            <button class="btn btn-sm btn-ghost gap-2">
+            <button class="btn btn-sm btn-ghost gap-2" (click)="exportDetailsCampaign()">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -154,9 +154,7 @@
                     }}</td>
 
                   <td class="text-right">
-                    <!-- (click)="onOpenAudio(a)" -->
-                    <button class="btn btn-ghost btn-xs">Ver</button>
-                    <!-- (click)="onRetryAudio(a)" -->
+                    <button class="btn btn-ghost btn-xs" (click)="onView(a)">Ver</button>
                     <button class="btn btn-ghost btn-xs" [disabled]="a.status!=='ERROR'">Reintentar</button>
                   </td>
                 </tr>
@@ -240,7 +238,6 @@
 
             <div class="mt-4 flex gap-2">
               <button class="btn btn-sm btn-ghost" (click)="openEditCampaign()">Editar campaña</button>
-              <!-- (click)="onDeleteCampaign()" -->
               <button class="btn btn-sm btn-error" (click)="openDeleteCampaign()">Eliminar</button>
             </div>
           </div>
@@ -257,6 +254,7 @@
   </form>
 </dialog>
 
+<app-see-transcription></app-see-transcription>
 <app-upload-audios></app-upload-audios>
 <app-edit-campaign></app-edit-campaign>
 <app-delete-campaign></app-delete-campaign>

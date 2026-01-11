@@ -19,7 +19,7 @@
               </p>
             </div>
 
-            <button type="button" class="btn btn-outline btn-sm" routerLink="/transcriptions/audios">
+            <button type="button" class="btn btn-outline btn-sm" (click)="openUploadAudios()">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -67,3 +67,5 @@
 
   </div>
 </div>
+
+<app-upload-audios></app-upload-audios>

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ApiConfigService } from '../../../core/config/api-config.service';
 import { AudioResponseDto, AudioUploadDto, AudiosUploadResponseDto, AudiosUploadDto } from '../../../api/dtos/audios.interface';
-import { map, Observable } from 'rxjs';
+import { EMPTY, expand, map, Observable, reduce } from 'rxjs';
 import { Audio } from '../../../domain/models/audios.model';
 import { Page } from '../../../domain/models/page.model';
 import { PageDto } from '../../../api/dtos/page.interface';
@@ -64,4 +64,22 @@ export class AudiosService {
     const url = this._api.main(`audios/campaign/${campaignId}/all`);
     return this._http.delete<any>(url);
   }
+
+  public loadAllByCampaign(campaignId: number, search?: string, status?: string, pageSize: number = 500): Observable<Audio[]> {
+
+    return this.load(1, pageSize, campaignId, status, search).pipe(
+      expand((resp) => {
+        const meta = resp.meta;
+        if (!meta) return EMPTY;
+
+        const nextPage = meta._page + 1;
+        if (nextPage > meta._pages) return EMPTY;
+
+        return this.load(nextPage, pageSize, campaignId, status, search);
+      }),
+      map(resp => resp.items ?? []),
+      reduce((acc, items) => acc.concat(items), [] as Audio[])
+    );
+  }
+
 }

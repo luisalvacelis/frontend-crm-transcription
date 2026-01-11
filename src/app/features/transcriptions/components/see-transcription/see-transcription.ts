@@ -22,7 +22,6 @@ export class SeeTranscription {
 
   public open(audio: Audio){
     this._audio.set(audio);
-    console.log(this.audio());
     this.dlg().nativeElement.showModal();
   }
 

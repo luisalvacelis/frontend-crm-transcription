@@ -119,7 +119,8 @@
                 ▶️
               </button>
 
-              <button class="btn btn-ghost btn-xs text-error" title="Eliminar">
+              <button class="btn btn-ghost btn-xs text-error" title="Eliminar"
+                (click)="campaignStat && deleteCampaign(campaignStat)">
                 🗑️
               </button>
             </div>
@@ -161,4 +162,5 @@
 </div>
 
 <app-upload-audios></app-upload-audios>
+<app-delete-campaign></app-delete-campaign>
 <app-campaign-details></app-campaign-details>

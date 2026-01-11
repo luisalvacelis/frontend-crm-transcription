@@ -10,18 +10,23 @@ import { UploadAudios } from '../upload-audios/upload-audios';
 import { EditCampaign } from '../../../campaigns/components/edit-campaign/edit-campaign';
 import { CampaignsStore } from '../../../campaigns/state/campaigns.store';
 import { DeleteCampaign } from '../../../campaigns/components/delete-campaign/delete-campaign';
+import { SeeTranscription } from '../see-transcription/see-transcription';
+import { TranscriptionsService } from '../../services/transcriptions.service';
+import { AudiosService } from '../../../audios/services/audios.service';
 
 type TabKey = 'audios' | 'analysis' | 'settings';
 
 @Component({
   selector: 'app-campaign-details',
-  imports: [DatePipe, CurrencyPipe, UploadAudios, EditCampaign, DeleteCampaign],
+  imports: [DatePipe, CurrencyPipe, UploadAudios, EditCampaign, DeleteCampaign, SeeTranscription],
   templateUrl: './campaign-details.html',
 })
 export class CampaignDetails {
 
   public readonly dlg: Signal<ElementRef<HTMLDialogElement>> = viewChild.required<ElementRef<HTMLDialogElement>>('dlg');
+
   public readonly newAudioModal: Signal<UploadAudios> = viewChild.required(UploadAudios);
+  public readonly seeTranscription: Signal<SeeTranscription> = viewChild.required(SeeTranscription);
   public readonly editCampaignModal: Signal<EditCampaign> = viewChild.required(EditCampaign);
   public readonly deletecampaignModal: Signal<DeleteCampaign> = viewChild.required(DeleteCampaign);
 
@@ -30,6 +35,8 @@ export class CampaignDetails {
   private readonly _campaignStore: CampaignsStore = inject(CampaignsStore);
   private readonly _searchSubject: Subject<string> = new Subject<string>();
   private readonly _destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly _transcriptionService: TranscriptionsService = inject(TranscriptionsService);
+  private readonly _audiosApi = inject(AudiosService);
 
   public readonly campaign: Signal<CampaignStats | null> = this._campaignStats.asReadonly();
   public readonly tab: WritableSignal<TabKey> = signal<TabKey>('audios');
@@ -128,6 +135,10 @@ export class CampaignDetails {
     this.close();
   }
 
+  public onView(audio: Audio): void{
+    this.seeTranscription().open(audio);
+  }
+
   public openEditCampaign(): void{
     const campaign_id = this._campaignStats()?.id;
 
@@ -146,5 +157,59 @@ export class CampaignDetails {
     });
 
     this.close();
+  }
+
+  public exportDetailsCampaign(): void {
+    const c = this.campaign();
+    if (!c) return;
+
+    const safeName = (c.name ?? 'campaign').trim().replace(/[\\/:*?"<>|]+/g, '-');
+    const fileName = `Campaign_${c.id}_${safeName}_${this.formatDateForFile(new Date())}`;
+
+    const kpis = [{
+      campaign_id: c.id,
+      campaign_name: c.name,
+      total_audios: c.total_audios ?? 0,
+      total_transcribed: c.total_transcribed ?? 0,
+      processing_or_queued: (c.processing ?? c.queued ?? 0),
+      total_duration_seconds: c.total_duration_seconds ?? 0,
+      total_cost_usd: c.total_cost ?? 0,
+      created_at: c.created_at ? new Date(c.created_at).toISOString() : '',
+      updated_at: c.updated_at ? new Date(c.updated_at).toISOString() : '',
+    }];
+
+    const search = this.searchTerm();
+    const status = '';
+
+    this._audiosApi.loadAllByCampaign(c.id, search, status, 100).subscribe((allAudios) => {
+      const audioRows = allAudios.map(a => ({
+        id: a.id,
+        original_name: a.original_name,
+        original_path: a.original_path,
+        status: a.status,
+        duration_seconds: a.duration_seconds ?? '',
+        cost_usd: a.cost ?? 0,
+        updated_at: a.updated_at ? new Date(a.updated_at).toISOString() : '',
+      }));
+
+      this._transcriptionService.exportToExcel({
+        fileName,
+        sheets: [
+          { sheetName: 'KPIs', data: kpis },
+          { sheetName: 'Audios', data: audioRows },
+        ],
+      });
+    });
+  }
+
+
+  private formatDateForFile(d: Date): string {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    const mm = pad(d.getMonth() + 1);
+    const dd = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mi = pad(d.getMinutes());
+    return `${yyyy}${mm}${dd}_${hh}${mi}`;
   }
 }
